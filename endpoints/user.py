@@ -1,6 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException, status
 
-from crud.user import user_database
+from deps import get_db
+import crud.user as crud
 from schemas.user import User, UserInDB
 
 
@@ -8,31 +9,31 @@ router = APIRouter(prefix="/user")
 
 
 @router.get("/{user_id}")
-async def get_user(user_id: int):
+async def get_user(user_id: int, db=Depends(get_db)):
     """Получить пользователя по заданному user_id"""
-    return user_database[user_id-1]
+    user = crud.get_user_by_id(db=db, user_id=user_id)
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    return user
 
 
 @router.post("/", response_model=UserInDB)
-async def create_user(user: User):
+async def create_user(user: User, db=Depends(get_db)):
     """Создать пользователя"""
-    # Здесь происходит добавление пользователя в БД
-    user_db = UserInDB(id=len(user_database)+1, **user.dict())
-    return user_db
+    result = crud.create_user(db=db, user=user)
+    return result
 
 
 @router.put("/{user_id}", response_model=UserInDB)
-async def update_user(user_id: int, user: User):
-    user_db = user_database[user_id-1]
-    for param, value in user.dict().items():
-        user_db[param] = value
-
-    # здесь изменения сохраняются в базу
+async def update_user(user_id: int, user: User, db=Depends(get_db)):
+    """Изменить пользователя"""
+    user_db = crud.update_user(db=db, user_id=user_id, user=user)
 
     return user_db
 
 
 @router.delete("/{user_id}")
-async def update_user(user_id: int):
-    db = list(user_database)
-    del db[user_id-1]
+async def delete_user(user_id: int, db=Depends(get_db)):
+    """Удалить пользователя"""
+    crud.delete_user(db=db, user_id=user_id)

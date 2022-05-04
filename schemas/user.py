@@ -9,3 +9,6 @@ class User(BaseModel):
 
 class UserInDB(User):
     id: int
+
+    class Config:
+        orm_mode = True
