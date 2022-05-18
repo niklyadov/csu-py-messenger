@@ -9,3 +9,16 @@
    - Удаление сообщения
    - Список из N последних сообщений в чате
    - Список из N чатов, в которых была последня активность
+
+## Полезные команды
+
+- Создание миграции
+```
+.\venv\Scripts\python.exe -m alembic revision --autogenerate -m "Поменяли password на hashed_password"
+```
+
+- Заполнение миграций
+`.\venv\Scripts\python.exe -m alembic upgrade head`
+
+- Запуск докер-контейнеров
+`docker-compose up -d`
