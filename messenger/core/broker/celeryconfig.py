@@ -1,8 +1,5 @@
 from os import getenv
 
-from dotenv import load_dotenv
-
-load_dotenv()
 
 broker_url = getenv("AMQP_URI")
 task_ignore_result = True

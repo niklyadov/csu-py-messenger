@@ -1,5 +1,7 @@
 """Различные методы проверки функционала"""
 from datetime import datetime
+from os import getenv
+import pytz
 
 from fastapi import APIRouter, WebSocket
 from fastapi.responses import HTMLResponse
@@ -18,7 +20,10 @@ def send_celery_task(begin_datetime: datetime):
     Args:
         begin_datetime: datetime, когда запустить задачу
     """
-    celery_app.send_task("queue.test", eta=begin_datetime)
+    timezone = pytz.timezone(getenv("TZ"))
+    dt_with_timezone = timezone.localize(begin_datetime)
+
+    celery_app.send_task("queue.test", eta=dt_with_timezone)
 
 
 html = """
