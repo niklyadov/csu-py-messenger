@@ -8,10 +8,19 @@
 ```
 
 - Заполнение миграций
-`.\venv\Scripts\python.exe -m alembic upgrade head`
+```
+.\venv\Scripts\python.exe -m alembic upgrade head
+```
 
 - Запуск докер-контейнеров
-`docker-compose up -d`
+```
+docker-compose up -d
+```
+
+- Запуск воркера celery
+```
+python -m celery -A worker worker -l info -Q queue -P solo
+```
 
 ## 1 задание
 
