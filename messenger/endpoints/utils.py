@@ -3,11 +3,12 @@ from datetime import datetime
 from os import getenv
 import pytz
 
-from fastapi import APIRouter, WebSocket
+from fastapi import APIRouter, WebSocket, Body
 from fastapi.responses import HTMLResponse
 
 from core.broker.celery import celery_app
 from core.broker.redis import redis
+from utils import async_query
 
 
 router = APIRouter(prefix="/utils")
@@ -63,6 +64,7 @@ html = """
 
 @router.get("/ws-page")
 async def ws_page():
+    """html-страница с подключением к вебсокету"""
     return HTMLResponse(html)
 
 
@@ -84,4 +86,14 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int):
 
 @router.get("/ws-pubsub")
 async def ws_pubsub(user_id: int, text: str = "test text"):
+    """Публикует событие в очередь пользователя"""
     await redis.publish(f"user-{user_id}", text)
+
+
+@router.post("/post_process_message")
+async def post_process_message(message: str = Body(..., embed=True)):
+    """Пост-обработка сообщений: выделение ссылок, упоминаний и и.д."""
+    url = "http://postprocessor:8080/extra"
+    extra = await async_query(task_url=url, text=message)
+
+    return extra

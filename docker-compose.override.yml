@@ -21,3 +21,15 @@ services:
       - .env
     volumes:
       - ./messenger:/app
+
+  postprocessor:
+    restart: always
+    build:
+      context: ./postprocessor
+      dockerfile: ./Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "${POSTPROCESSOR_PORT}:8080"
+    volumes:
+      - ./postprocessor:/app

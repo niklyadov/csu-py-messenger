@@ -17,3 +17,11 @@ services:
       dockerfile: ./DockerfileWorker.prod
     env_file:
       - .env
+
+  postptocessor:
+    restart: always
+    build:
+      context: ./postprocessor
+      dockerfile: ./Dockerfile
+    env_file:
+      - .env
