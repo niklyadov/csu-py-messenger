@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Chat</title>
+    <link rel="stylesheet" href="/static/assets/css/chat.css"/>
+
+    <script src="/static/assets/js/etc.js"></script>
+    <script src="/static/assets/js/login.js"></script>
+    <script src="/static/assets/js/chats.js"></script>
+</head>
+<body>
+    <div class='some-page-wrapper'>
+        <div class="top">
+            <div class="left">
+                PyGram
+            </div>
+            <div class="center">
+                Default chat
+                <span><span style="color: red;" id="ws-status">disconnected</span> | <a href="#" onclick="chats.reconnect()">reconnect</a></span>
+            </div>
+            <div class="right">
+                test <a href="#" onclick="login.logout()">(logout)</a>
+            </div>
+        </div>
+        <div class='row'>
+          <div class='column'>
+            <div class='blue-column'>
+                <ul id='mychats'>
+                </ul>
+            </div>
+          </div>
+          <div class='column'>
+            <div class='green-column'>
+                <ul id='messages' class="chat">
+                </ul>
+    
+                <div class="bottom">
+                    <form action="" onsubmit="chats.sendMessage(); event.preventDefault(); return false;">
+                        <input type="text" id="messageText" autocomplete="off"/>
+                        <button>Send</button>
+                    </form>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+<!--script type="module">
+    import defaultExport from "/static/assets/js/login.js";
+</script-->
+
+<script type="text/javascript">
+    window.addEventListener('load', async (event) => {
+        while(!await login.requestLoginAndPasswordIfNotLoggedIn()) {}
+        //document.getElementById("status").innerHTML = `<p color='green'>Welcome ${localStorage.getItem("USER_NAME")} (${localStorage.getItem("USER_LOGIN")})</p>`
+        await chats.loadChats();
+    });
+
+    function logout() {
+
+    }
+
+</script>
+</body>
+</html>

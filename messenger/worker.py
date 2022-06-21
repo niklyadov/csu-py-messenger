@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from core.broker.celery import celery_app
+from core.broker.celery_inst import celery_app
 
 
 @celery_app.task(name="queue.test")

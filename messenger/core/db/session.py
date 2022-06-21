@@ -8,7 +8,7 @@ PASSWORD = getenv("POSTGRES_PASSWORD")
 DB_PORT = getenv("DB_PORT")
 DB_NAME = getenv("POSTGRES_DB")
 
-db_url = f"postgresql://{USER}:{PASSWORD}@postgres:{DB_PORT}/{DB_NAME}"
-# sqllite_url = "sqlite://"
-engine = create_engine(db_url)
+#db_url = f"postgresql://{USER}:{PASSWORD}@postgres:{DB_PORT}/{DB_NAME}"
+db_url = "sqlite:///sqlite.db"
+engine = create_engine(db_url,connect_args={'check_same_thread': False})
 session = sessionmaker(engine)
