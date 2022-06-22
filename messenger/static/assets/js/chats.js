@@ -64,7 +64,7 @@ const chats = (() => {
             let data  = parseShit(event.data);
             that.displayMessage(data, messagesElement)
             console.log("new message!!")
-        }
+        }   
 
         (() => {
             console.log('connection opened')
@@ -80,7 +80,6 @@ const chats = (() => {
 
             status.innerText = "disconnected"
             status.style.color = "red"
-            currentConnection = null;
         }
     }
 
@@ -90,6 +89,9 @@ const chats = (() => {
     }
 
     that.sendMessage = async () => {
+
+        console.log("sending message")
+
         const currentToken = localStorage.getItem(TOKEN)
 
         if(!!currentConnection) {
