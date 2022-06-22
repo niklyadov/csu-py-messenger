@@ -1,70 +1,70 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Chat</title>
-    <link rel="stylesheet" href="/static/assets/css/chat.css"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messanger</title>
+
+    <link rel="stylesheet" href="/static/assets/css/style.css"/>
 
     <script src="/static/assets/js/etc.js"></script>
     <script src="/static/assets/js/login.js"></script>
     <script src="/static/assets/js/chats.js"></script>
 </head>
 <body>
-    <div class='some-page-wrapper'>
-        <div class="top">
-            <div class="left">
-                PyGram
-            </div>
-            <div class="center">
-                Default chat
-                <span><span style="color: red;" id="ws-status">disconnected</span> | <a href="#" onclick="chats.reconnect()">reconnect</a></span>
-            </div>
-            <div class="right">
-                test <a href="#" onclick="login.logout()">(logout)</a>
-            </div>
+    <header>
+        <div class="top-bar">
+            <div>PyGram</div>
+            <div class="top-bar__separator-line"></div>
+            <div id="active_chat" class="active-chat__name">Default chat</div>
+            <div class="top-bar__separator"></div>
+            <div class="active-chat__status" id="ws-status">disconnected</div>
+            <div class="top-bar__separator"></div>
+            <button class="active-chat__reconnect" onclick="chats.reconnect()">reconnect</button>
         </div>
-        <div class='row'>
-          <div class='column'>
-            <div class='blue-column'>
-                <ul id='mychats'>
+        <div class="account__wrapper">
+            <div class="account__username" id="username">username</div>
+            <button class="account__logout" onclick="logout()">logout</button>
+        </div>
+    </header>
+    <div class="wrapper">
+        <div class="chats-list__wrapper">
+            <ul class="chats-list" id='mychats'>
+            </ul>
+        </div>
+        <div class="chat__wrapper">
+            <div class="chat__body">
+                <ul class="chat" id='messages'>
                 </ul>
             </div>
-          </div>
-          <div class='column'>
-            <div class='green-column'>
-                <ul id='messages' class="chat">
-                </ul>
-    
-                <div class="bottom">
-                    <form action="" onsubmit="chats.sendMessage(); event.preventDefault(); return false;">
-                        <input type="text" id="messageText" autocomplete="off"/>
-                        <button>Send</button>
-                    </form>
-                </div>
+            <div class="chat__bottom">
+                <form id="message-form" class="message-form" onsubmit="chats.sendMessage(); event.preventDefault(); return false;">
+                    <input class="message-form__input" id="message-input" type="text" placeholder="type a message..." autocomplete="off">
+                    <input class="message-form__send" type="submit" value="Send">
+                </form>
             </div>
-          </div>
         </div>
-      </div>
+    </div>
 
+    <!--script type="module">
+        import defaultExport from "/static/assets/js/login.js";
+    </script-->
 
-<!--script type="module">
-    import defaultExport from "/static/assets/js/login.js";
-</script-->
+    <script type="text/javascript">
+        window.addEventListener('load', async (event) => {
+            while(!await login.requestLoginAndPasswordIfNotLoggedIn()) {}
+            //document.getElementById("status").innerHTML = `<p color='green'>Welcome ${localStorage.getItem("USER_NAME")} (${localStorage.getItem("USER_LOGIN")})</p>`
+            await chats.loadChats();
 
-<script type="text/javascript">
-    window.addEventListener('load', async (event) => {
-        while(!await login.requestLoginAndPasswordIfNotLoggedIn()) {}
-        //document.getElementById("status").innerHTML = `<p color='green'>Welcome ${localStorage.getItem("USER_NAME")} (${localStorage.getItem("USER_LOGIN")})</p>`
-        await chats.loadChats();
-    });
+            let user = await login.getLoggedUser();
+            document.getElementById('username').innerText = user.name;
+        });
 
-    function logout() {
-
-    }
-
-</script>
+        function logout() {
+            login.logout();
+            location.reload(); // refresh after reload
+        }
+    </script>
 </body>
 </html>

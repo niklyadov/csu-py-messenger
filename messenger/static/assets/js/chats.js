@@ -2,6 +2,7 @@ const chats = (() => {
     const TOKEN = "Bearer"
     let that = {}
     let currentConnection;
+    let sessionId = uuidv4()
 
     that.loadChats = () => {
         const currentToken = localStorage.getItem(TOKEN)
@@ -10,16 +11,16 @@ const chats = (() => {
         let myChats = document.getElementById('mychats')
         myChats.innerHTML = ""; //clear before insert
 
-        fetch('/chat/my', {method: 'GET', headers: { Authorization: "Bearer " + currentToken }}).then(r => r.json())
+        fetch('/chat/my', {method: 'GET', headers: { Authorization: `Bearer ${currentToken}` }}).then(r => r.json())
             .then(data => data.forEach(element => {
-                let chatItem = createElementFromHTML(`<li>${element.name}</li>`)
-                chatItem.onclick = () => that.selectChat(element.id)
+                let chatItem = createElementFromHTML(`<li><a>${element.name}</a></li>`)
+                chatItem.onclick = async () => that.selectChat(element.id)
                 myChats.appendChild(chatItem)
             }))
     }
 
 
-    that.selectChat = (chatId) => {
+    that.selectChat = async (chatId) => {
         if(!!currentConnection && currentConnection.chatId != chatId && !!currentConnection.socket) {
             currentConnection.socket.close();
         }
@@ -28,7 +29,7 @@ const chats = (() => {
 
         messagesElement.innerHTML = "";
 
-        fetch(`/message/chat?chat_id=${chatId}`, {method: 'GET', headers: { Authorization: "Bearer " + currentToken }})
+        fetch(`/message/chat?chat_id=${chatId}`, {method: 'GET', headers: { Authorization: `Bearer ${currentToken}` }})
             .then(response => {
                 if(response.ok) {
                     let data = response.json()
@@ -39,6 +40,17 @@ const chats = (() => {
                 }
             });
 
+
+        fetch(`/chat?chat_id=${chatId}`, {method: 'GET', headers: { Authorization: `Bearer ${currentToken}` }})
+            .then(response => {
+                if(response.ok) {
+                    let data = response.json()
+                    data.then(d => {
+                        document.getElementById('active_chat').innerText = d.name
+                    })
+                }
+            });
+
         let socket = new WebSocket(`ws://127.0.0.1:8000/ws/${chatId}`)
 
         currentConnection = {
@@ -46,19 +58,24 @@ const chats = (() => {
             socket: socket
         }
 
+        let currentUser = await login.getLoggedUser();
+
         socket.onmessage = (event) => {
-            let data = JSON.parse(event.data.replace(/(?:\\[rn])+/g, ''))
-            that.displayMessage(JSON.parse(data), messagesElement)
+            let data  = parseShit(event.data);
+            that.displayMessage(data, messagesElement)
+            console.log("new message!!")
         }
 
-        socket.onopen = () => {
+        (() => {
+            console.log('connection opened')
             let status = document.getElementById('ws-status')
 
             status.innerText = "connected"
             status.style.color = "green"
-        }
+        })()
 
         socket.onclose = () => {
+            console.log('connection closed')
             let status = document.getElementById('ws-status')
 
             status.innerText = "disconnected"
@@ -73,9 +90,11 @@ const chats = (() => {
     }
 
     that.sendMessage = async () => {
+        const currentToken = localStorage.getItem(TOKEN)
+
         if(!!currentConnection) {
             let currentUser = await login.getLoggedUser();
-            var input = document.getElementById("messageText")
+            var input = document.getElementById("message-input")
             const json_request_body = JSON.stringify({
                 user_id: currentUser.id,
                 chat_id: currentConnection.chatId,
@@ -84,7 +103,7 @@ const chats = (() => {
                 read: false
             });
 
-            fetch(`/message/`, {method: 'POST', headers: { Authorization: "Bearer " + TOKEN, "Content-Type": "application/json" }, body: json_request_body})
+            fetch(`/message/`, {method: 'POST', headers: { Authorization: `Bearer ${currentToken}`, "Content-Type": "application/json" }, body: json_request_body})
             input.value = ''
         }
     }
@@ -102,7 +121,7 @@ const chats = (() => {
                 return await that.sendMessage()
             }
         },
-        
+
         reconnect: async () => {
             if(!!currentConnection && !!currentConnection.chatId) {
                 that.selectChat(currentConnection.chatId);
@@ -110,3 +129,19 @@ const chats = (() => {
         }
     }
 })()
+
+
+function parseShit(s) {
+    s.replace(/\\n/g, "\\n")  
+        .replace(/\\'/g, "\\'")
+        .replace(/\\"/g, '\\"')
+        .replace(/\\&/g, "\\&")
+        .replace(/\\r/g, "\\r")
+        .replace(/\\t/g, "\\t")
+        .replace(/\\b/g, "\\b")
+        .replace(/\\f/g, "\\f")
+        .replace(/[\u0000-\u0019]+/g,""); 
+
+
+    return JSON.parse(JSON.parse( s))
+}

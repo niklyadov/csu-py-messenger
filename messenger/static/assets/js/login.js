@@ -5,9 +5,9 @@ const login = (() => {
 
     that.getLoggedUser = async () => {
         const currentToken = localStorage.getItem(TOKEN)
-        return await fetch('/user/', {method: 'GET', headers: { Authorization: "Bearer " + currentToken }})
+        return await fetch('/user/', {method: 'GET', headers: { Authorization: `Bearer ${currentToken}` }})
                 .then(response => {
-                    if (response.status == 200) {
+                    if (response.ok) {
                         let data = response.json()
 
                         localStorage.setItem("USER_ID", data.id)

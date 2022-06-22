@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
-from core.db.session import session
+from common.db.session import session
 from security import get_user_from_jwt
 
 

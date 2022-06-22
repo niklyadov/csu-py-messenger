@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from core.db.models import User
+from common.db.models import User
 import schemas.user as schema
 from security import get_password_hash, verify_password
 

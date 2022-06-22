@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from deps import get_db, get_current_user
-import crud.user as crud
+import common.crud.user as crud
 from schemas.user import User, UserInDB
 
 router = APIRouter(prefix="/user")

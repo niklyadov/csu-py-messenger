@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 
 from pydantic import BaseModel
@@ -17,3 +18,12 @@ class ChatInDB(Chat):
 
     class Config:
         orm_mode = True
+
+
+class ChatEvent:
+    event_name: str
+    event_data: str
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,
+                          sort_keys=True, indent=4)

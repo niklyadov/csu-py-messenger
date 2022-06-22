@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from crud.user import authenticate
-import crud.user as crud
+from common.crud.user import authenticate
+import common.crud.user as crud
 from deps import get_db, get_current_user
 from schemas.user import UserInDB, UserCreate
 from security import create_access_token

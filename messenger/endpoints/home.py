@@ -8,8 +8,8 @@ from fastapi.responses import HTMLResponse
 
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
-from core.broker.celery_inst import celery_app
-from core.broker.redis_inst import redis
+from common.broker.celery_inst import celery_app
+from common.broker.redis_inst import redis
 
 router = APIRouter()
 
@@ -48,3 +48,4 @@ async def websocket_endpoint(websocket: WebSocket, chat_id: int):
         if message:
             json_obj = json.dumps(message["data"])
             await websocket.send_text(json_obj)
+

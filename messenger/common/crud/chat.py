@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 
-from core.db.models import Chat
-from core.db.models import UserChat
-from core.db.models import User
+from common.db.models import Chat
+from common.db.models import UserChat
+from common.db.models import User
 import schemas.chat as schema_c
 import schemas.chat_user as schema_u
 

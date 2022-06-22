@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
 
 from deps import get_db, get_current_user
-import crud.chat as crud
+import common.crud.chat as crud
 from schemas.chat import Chat, ChatInDB
 from schemas.user import UserInDB
 
